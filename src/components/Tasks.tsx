@@ -24,13 +24,13 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
 
   const [prevTask, setPrevTask] = useState<string | null>(null);
 
-  const [taskAnimation, setTaskAnimation] = useState(false);
+  const [taskAnimation, setTaskAnimation] = useState<boolean>(false);
 
   const addTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    const taskInput = form.task as HTMLInputElement;
-    const task = taskInput.value;
+    const taskTextArea = form.task as HTMLTextAreaElement;
+    const task = taskTextArea.value;
 
     if (!task) return;
 
@@ -44,7 +44,11 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
         editedAt: null,
       },
     ]);
-    taskInput.value = "";
+
+    // Reset textarea value and height
+    taskTextArea.value = "";
+    taskTextArea.style.height = "unset";
+
     toast("Task added successfully");
   };
 
@@ -128,6 +132,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
                 className={!element.edit ? "task" : "task-input"}
                 disabled={!element.edit}
                 onChange={(e) => handleUpdate(index, e)}
+                onInput={resizeTextArea}
               />
               <span className="task-date">
                 {(() => {
