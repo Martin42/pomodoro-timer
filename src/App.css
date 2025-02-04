@@ -88,8 +88,6 @@ header {
   border: none;
   color: #eee3e3;
   font-size: 1rem;
-  min-height: min-content;
-  overflow-y: hidden;
   resize: none;
   width: 80%;
 }

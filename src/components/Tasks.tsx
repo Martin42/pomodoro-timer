@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 //SVG Imports
 import addTaskSVG from "../assets/add-icon.svg";
@@ -20,7 +20,14 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
       createdAt: string;
       editedAt: string | null;
     }[]
-  >([]);
+  >(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+  }, [taskList]);
 
   const [prevTask, setPrevTask] = useState<string | null>(null);
 
@@ -126,8 +133,13 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
             <div className="task-wrapper">
+              <label htmlFor="task" className="form-label">
+                task
+              </label>
               <textarea
-                placeholder=""
+                rows={1}
+                name="task"
+                placeholder="task placeholder"
                 value={element.task}
                 className={!element.edit ? "task" : "task-input"}
                 disabled={!element.edit}
