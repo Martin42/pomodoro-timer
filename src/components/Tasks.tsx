@@ -70,8 +70,6 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
         );
       }
     }
-
-    console.log(taskList);
   };
 
   // Allows users to update their tasks
@@ -125,7 +123,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
           >
             <div className="task-wrapper">
               <textarea
-                rows={1}
+                placeholder=""
                 value={element.task}
                 className={!element.edit ? "task" : "task-input"}
                 disabled={!element.edit}

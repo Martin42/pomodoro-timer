@@ -2,7 +2,6 @@ body {
   margin: 2rem;
   background: linear-gradient(168deg, #80bbea 0%, #456b88 100%);
   background-repeat: no-repeat;
-  height: 100dvh;
 }
 
 main {
@@ -161,5 +160,11 @@ header {
   .task-container {
     margin: 0 auto;
     min-width: 48rem;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  header {
+    margin: 3rem 3rem 0 3rem;
   }
 }
