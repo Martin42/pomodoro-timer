@@ -52,10 +52,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
       },
     ]);
 
-    // Reset textarea value and height
     taskTextArea.value = "";
-    taskTextArea.style.height = "unset";
-
     toast("Task added successfully");
   };
 
@@ -113,11 +110,26 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
   };
 
   // Resize Textarea function
-  const resizeTextArea = (event: React.FormEvent<HTMLTextAreaElement>) => {
-    const textarea = event.target as HTMLTextAreaElement;
-    textarea.style.height = "auto";
-    textarea.style.height = `${textarea.scrollHeight}px`;
+  const resizeTextArea = (element: HTMLTextAreaElement) => {
+    element.style.height = "auto";
+    element.style.height = `${element.scrollHeight}px`;
   };
+
+  useEffect(() => {
+    // Handle task list textareas
+    const taskTextAreas = document.querySelectorAll(".task, .task-input");
+    taskTextAreas.forEach((textarea) => {
+      if (textarea instanceof HTMLTextAreaElement) {
+        resizeTextArea(textarea);
+      }
+    });
+
+    // Handle main input textarea
+    const mainTextArea = document.getElementById("task-input");
+    if (mainTextArea instanceof HTMLTextAreaElement) {
+      resizeTextArea(mainTextArea);
+    }
+  }, [taskList]); // Runs whenever taskList changes
 
   return (
     <section className="task-container">
@@ -144,7 +156,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
                 className={!element.edit ? "task" : "task-input"}
                 disabled={!element.edit}
                 onChange={(e) => handleUpdate(index, e)}
-                onInput={resizeTextArea}
+                onInput={(e) => resizeTextArea(e.currentTarget)}
               />
               <span className="task-date">
                 {(() => {
@@ -198,7 +210,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
             className="task-input"
             placeholder="Read documentation..."
             id="task-input"
-            onInput={resizeTextArea}
+            onInput={(e) => resizeTextArea(e.currentTarget)}
           />
           <button
             type="submit"
