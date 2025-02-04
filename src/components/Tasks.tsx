@@ -13,9 +13,16 @@ interface TaskProps {
 }
 
 const Tasks: React.FC<TaskProps> = ({ toast }) => {
-  const [taskList, setTaskList] = useState<{ task: string; edit: boolean }[]>(
-    []
-  );
+  const [taskList, setTaskList] = useState<
+    {
+      task: string;
+      edit: boolean;
+      createdAt: string;
+      editedAt: string | null;
+    }[]
+  >([]);
+
+  const [prevTask, setPrevTask] = useState<string | null>(null);
 
   const [taskAnimation, setTaskAnimation] = useState(false);
 
@@ -28,25 +35,49 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
     if (!task) return;
 
     // If a variable "task" exists in the same scope, { task } is automatically expanded to { task: task }.
-    setTaskList((prevList) => [...prevList, { task, edit: false }]);
+    setTaskList((prevList) => [
+      ...prevList,
+      {
+        task,
+        edit: false,
+        createdAt: new Date().toISOString(),
+        editedAt: null,
+      },
+    ]);
     taskInput.value = "";
     toast("Task added successfully");
   };
 
   // Toggles edit mode for a specific task
   const toggleEditMode = (index: number) => {
+    setPrevTask(taskList[index].task);
     setTaskList((prevList) =>
       prevList.map((task, i) =>
         i === index ? { ...task, edit: !task.edit } : task
       )
     );
-    // TO DO: Figure out how to send a toast when a task is updated
+
+    if (taskList[index].edit) {
+      if (taskList[index].task !== prevTask) {
+        // Send a toast only when the task is actually updated
+        toast("Task updated successfully!");
+
+        // Add the editedAt field to the task
+        setTaskList((prevList) =>
+          prevList.map((task, i) =>
+            i === index ? { ...task, editedAt: new Date().toISOString() } : task
+          )
+        );
+      }
+    }
+
+    console.log(taskList);
   };
 
   // Allows users to update their tasks
   const handleUpdate = (
     index: number,
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     const input = e.target.value;
     setTaskList((prevList) =>
@@ -72,14 +103,19 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
     }
   };
 
+  // Resize Textarea function
+  const resizeTextArea = (event: React.FormEvent<HTMLTextAreaElement>) => {
+    const textarea = event.target as HTMLTextAreaElement;
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  };
+
   return (
     <section className="task-container">
       <h1 className="task-title">CURRENT TASKS</h1>
       {taskList.length > 0 &&
         taskList.map((element, index) => (
           <motion.div
-            // TO DO: Sort tasks by newest first
-            // TO DO: Add animation for when the div is deleted
             key={index}
             className="input-wrapper"
             initial={{ opacity: 0, y: 50 }}
@@ -87,13 +123,25 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
             exit={{ opacity: 0, y: 50 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
-            <input
-              type="text"
-              value={element.task}
-              className={!element.edit ? "task" : "task-input"}
-              disabled={!element.edit}
-              onChange={(e) => handleUpdate(index, e)}
-            />
+            <div className="task-wrapper">
+              <textarea
+                rows={1}
+                value={element.task}
+                className={!element.edit ? "task" : "task-input"}
+                disabled={!element.edit}
+                onChange={(e) => handleUpdate(index, e)}
+              />
+              <span className="task-date">
+                {(() => {
+                  const date = element.editedAt || element.createdAt;
+                  const label = element.editedAt ? "Edited at:" : "Created at:";
+                  return `${label} ${new Date(date).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}`;
+                })()}
+              </span>
+            </div>
             <div className="task-options-container">
               <button
                 type="button"
@@ -129,12 +177,13 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
           task
         </label>
         <div className="input-wrapper">
-          <input
-            type="text"
+          <textarea
+            rows={1}
             name="task"
             className="task-input"
             placeholder="Read documentation..."
             id="task-input"
+            onInput={resizeTextArea}
           />
           <button
             type="submit"

@@ -70,9 +70,17 @@ header {
 .input-wrapper {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   border: 0.2px solid #eee3e3;
   padding: 1rem;
   border-radius: 6px;
+}
+
+.task-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
 }
 
 .task,
@@ -81,6 +89,10 @@ header {
   border: none;
   color: #eee3e3;
   font-size: 1rem;
+  min-height: min-content;
+  overflow-y: hidden;
+  resize: none;
+  width: 80%;
 }
 
 .task-input {
@@ -94,6 +106,12 @@ header {
 .task-options-container {
   display: flex;
   gap: 0.75rem;
+}
+
+.task-date {
+  font-size: 0.7rem;
+  color: white;
+  font-weight: lighter;
 }
 
 /* Buttons */
@@ -128,4 +146,20 @@ header {
 .custom-toast {
   background-color: #eee3e3;
   border-radius: 6px;
+}
+
+/* Media Queries */
+
+@media only screen and (min-width: 426px) {
+  .task-container {
+    margin: 0 auto;
+    min-width: 24rem;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .task-container {
+    margin: 0 auto;
+    min-width: 48rem;
+  }
 }
