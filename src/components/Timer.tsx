@@ -8,10 +8,10 @@ import resetSVG from "../assets/reset-icon.svg";
 import { motion } from "framer-motion";
 
 interface TaskProps {
-  toast: (info: string) => void;
+  infoToast: (info: string) => void;
 }
 
-const Timer: React.FC<TaskProps> = ({ toast }) => {
+const Timer: React.FC<TaskProps> = ({ infoToast }) => {
   const POMODORO_SECONDS = 25 * 60; // 25 minutes in seconds
 
   const pomodoroRef = useRef<number | null>(null);
@@ -49,7 +49,7 @@ const Timer: React.FC<TaskProps> = ({ toast }) => {
       pomodoroRef.current = null;
     }
 
-    toast("Timer reset!");
+    infoToast("Timer reset!");
 
     // Animate reset button
     setResetAnimate(true);

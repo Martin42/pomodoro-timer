@@ -20,10 +20,24 @@ function App() {
     });
   };
 
+  const warningToast = (warning: string) => {
+    toast.warn(warning, {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Slide,
+    });
+  };
+
   return (
     <main>
-      <Timer toast={infoToast} />
-      <Tasks toast={infoToast} />
+      <Timer infoToast={infoToast} />
+      <Tasks infoToast={infoToast} warningToast={warningToast} />
       <ToastContainer
         position="bottom-left"
         autoClose={2000}

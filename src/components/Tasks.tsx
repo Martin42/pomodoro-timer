@@ -9,10 +9,11 @@ import updateTaskSVG from "../assets/update-icon.svg";
 import deleteTaskSVG from "../assets/delete-icon.svg";
 
 interface TaskProps {
-  toast: (info: string) => void;
+  infoToast: (info: string) => void;
+  warningToast: (warning: string) => void;
 }
 
-const Tasks: React.FC<TaskProps> = ({ toast }) => {
+const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
   const [taskList, setTaskList] = useState<
     {
       task: string;
@@ -30,7 +31,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
   }, [taskList]);
 
   const [prevTask, setPrevTask] = useState<string | null>(null);
-  const [taskAnimation, setTaskAnimation] = useState<boolean>(false);
+  const [shouldAnimate, setShouldAnimate] = useState<boolean>(false);
 
   const addTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,12 +53,12 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
     ]);
 
     taskTextArea.value = "";
-    toast("Task added successfully");
+    infoToast("Task added successfully");
 
     // Handle add task animation
-    setTaskAnimation(true);
+    setShouldAnimate(true);
     setTimeout(() => {
-      setTaskAnimation(false);
+      setShouldAnimate(false);
     }, 300);
   };
 
@@ -74,7 +75,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
       if (taskList[index].task) {
         if (taskList[index].task !== prevTask) {
           // Send a toast only when the task is actually updated
-          toast("Task updated successfully!");
+          infoToast("Task updated successfully!");
 
           // Add the editedAt field to the task
           setTaskList((prevList) =>
@@ -86,7 +87,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
           );
         }
       } else {
-        alert("cant update a task with nothing");
+        warningToast("An existing task cannot be empty!");
         if (prevTask) {
           setTaskList((prevList) =>
             prevList.map((task, i) =>
@@ -112,7 +113,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
   // Delete a specific task
   const handleDelete = (index: number) => {
     setTaskList(taskList.filter((_, i) => i !== index));
-    toast("Task Deleted!");
+    infoToast("Task Deleted!");
   };
 
   return (
@@ -206,7 +207,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
                 animate={{
                   opacity: 1,
                   scale: 1,
-                  rotate: taskAnimation ? [0, -180] : -180,
+                  rotate: shouldAnimate ? [0, -180] : -180,
                 }}
                 exit={{ opacity: 0, scale: 1 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
