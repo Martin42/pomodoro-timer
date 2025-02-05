@@ -53,6 +53,12 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
 
     taskTextArea.value = "";
     toast("Task added successfully");
+
+    // Handle add task animation
+    setTaskAnimation(true);
+    setTimeout(() => {
+      setTaskAnimation(false);
+    }, 300);
   };
 
   // Toggles edit mode for a specific task
@@ -107,18 +113,6 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
   const handleDelete = (index: number) => {
     setTaskList(taskList.filter((_, i) => i !== index));
     toast("Task Deleted!");
-  };
-
-  // Animate button click
-  const animateAddTask = () => {
-    const input = document.getElementById("task-input") as HTMLInputElement;
-    if (input && input.value.trim() !== "") {
-      setTaskAnimation(true);
-
-      setTimeout(() => {
-        setTaskAnimation(false);
-      }, 300);
-    }
   };
 
   return (
@@ -195,6 +189,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
         <div className="input-wrapper">
           <div className="task-wrapper">
             <TextareaAutosize
+              required
               rows={1}
               name="task"
               className="task-input"
@@ -203,12 +198,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
             />
           </div>
           <div>
-            <button
-              type="submit"
-              title="add task"
-              className="btn btn-small"
-              onClick={animateAddTask}
-            >
+            <button type="submit" title="add task" className="btn btn-small">
               <motion.img
                 src={addTaskSVG}
                 alt="add task"
