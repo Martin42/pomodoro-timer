@@ -148,17 +148,21 @@ header {
 
 /* Media Queries */
 
-@media only screen and (min-width: 426px) {
+@media only screen and (min-width: 686px) {
   .task-container {
     margin: 0 auto;
-    min-width: 24rem;
+    min-width: 32rem;
   }
 }
 
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: 1024px) {
   .task-container {
     margin: 0 auto;
     min-width: 48rem;
+  }
+
+  .timer {
+    font-size: 6rem;
   }
 }
 

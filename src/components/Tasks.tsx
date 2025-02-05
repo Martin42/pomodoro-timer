@@ -151,7 +151,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
               <textarea
                 rows={1}
                 name="task"
-                placeholder="task placeholder"
+                placeholder="Task"
                 value={element.task}
                 className={!element.edit ? "task" : "task-input"}
                 disabled={!element.edit}
@@ -204,33 +204,37 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
           task
         </label>
         <div className="input-wrapper">
-          <textarea
-            rows={1}
-            name="task"
-            className="task-input"
-            placeholder="Read documentation..."
-            id="task-input"
-            onInput={(e) => resizeTextArea(e.currentTarget)}
-          />
-          <button
-            type="submit"
-            title="add task"
-            className="btn btn-small"
-            onClick={animateAddTask}
-          >
-            <motion.img
-              src={addTaskSVG}
-              alt="add task"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                rotate: taskAnimation ? [0, -180] : -180,
-              }}
-              exit={{ opacity: 0, scale: 1 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
+          <div className="task-wrapper">
+            <textarea
+              rows={1}
+              name="task"
+              className="task-input"
+              placeholder="Read documentation..."
+              id="task-input"
+              onInput={(e) => resizeTextArea(e.currentTarget)}
             />
-          </button>
+          </div>
+          <div>
+            <button
+              type="submit"
+              title="add task"
+              className="btn btn-small"
+              onClick={animateAddTask}
+            >
+              <motion.img
+                src={addTaskSVG}
+                alt="add task"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  rotate: taskAnimation ? [0, -180] : -180,
+                }}
+                exit={{ opacity: 0, scale: 1 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+              />
+            </button>
+          </div>
         </div>
       </form>
     </section>
