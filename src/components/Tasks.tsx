@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import TextareaAutosize from "react-textarea-autosize";
 
 //SVG Imports
 import addTaskSVG from "../assets/add-icon.svg";
 import editTaskSVG from "../assets/edit-icon.svg";
 import updateTaskSVG from "../assets/update-icon.svg";
 import deleteTaskSVG from "../assets/delete-icon.svg";
-
-import { motion } from "framer-motion";
 
 interface TaskProps {
   toast: (info: string) => void;
@@ -30,7 +30,6 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
   }, [taskList]);
 
   const [prevTask, setPrevTask] = useState<string | null>(null);
-
   const [taskAnimation, setTaskAnimation] = useState<boolean>(false);
 
   const addTask = (e: React.FormEvent<HTMLFormElement>) => {
@@ -122,28 +121,6 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
     }
   };
 
-  // Resize Textarea function
-  const resizeTextArea = (element: HTMLTextAreaElement) => {
-    element.style.height = "auto";
-    element.style.height = `${element.scrollHeight}px`;
-  };
-
-  useEffect(() => {
-    // Handle task list textareas
-    const taskTextAreas = document.querySelectorAll(".task, .task-input");
-    taskTextAreas.forEach((textarea) => {
-      if (textarea instanceof HTMLTextAreaElement) {
-        resizeTextArea(textarea);
-      }
-    });
-
-    // Handle main input textarea
-    const mainTextArea = document.getElementById("task-input");
-    if (mainTextArea instanceof HTMLTextAreaElement) {
-      resizeTextArea(mainTextArea);
-    }
-  }, [taskList]); // Runs whenever taskList changes
-
   return (
     <section className="task-container">
       <h1 className="task-title">CURRENT TASKS</h1>
@@ -161,7 +138,7 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
               <label htmlFor="task" className="form-label">
                 task
               </label>
-              <textarea
+              <TextareaAutosize
                 rows={1}
                 name="task"
                 placeholder="Task"
@@ -169,7 +146,6 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
                 className={!element.edit ? "task" : "task-input"}
                 disabled={!element.edit}
                 onChange={(e) => handleUpdate(index, e)}
-                onInput={(e) => resizeTextArea(e.currentTarget)}
               />
               <span className="task-date">
                 {(() => {
@@ -218,13 +194,12 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
         </label>
         <div className="input-wrapper">
           <div className="task-wrapper">
-            <textarea
+            <TextareaAutosize
               rows={1}
               name="task"
               className="task-input"
               placeholder="Read documentation..."
               id="task-input"
-              onInput={(e) => resizeTextArea(e.currentTarget)}
             />
           </div>
           <div>
