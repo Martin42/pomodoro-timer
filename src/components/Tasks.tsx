@@ -66,16 +66,29 @@ const Tasks: React.FC<TaskProps> = ({ toast }) => {
     );
 
     if (taskList[index].edit) {
-      if (taskList[index].task !== prevTask) {
-        // Send a toast only when the task is actually updated
-        toast("Task updated successfully!");
+      if (taskList[index].task) {
+        if (taskList[index].task !== prevTask) {
+          // Send a toast only when the task is actually updated
+          toast("Task updated successfully!");
 
-        // Add the editedAt field to the task
-        setTaskList((prevList) =>
-          prevList.map((task, i) =>
-            i === index ? { ...task, editedAt: new Date().toISOString() } : task
-          )
-        );
+          // Add the editedAt field to the task
+          setTaskList((prevList) =>
+            prevList.map((task, i) =>
+              i === index
+                ? { ...task, editedAt: new Date().toISOString() }
+                : task
+            )
+          );
+        }
+      } else {
+        alert("cant update a task with nothing");
+        if (prevTask) {
+          setTaskList((prevList) =>
+            prevList.map((task, i) =>
+              i === index ? { ...task, task: prevTask } : task
+            )
+          );
+        }
       }
     }
   };
