@@ -11,7 +11,6 @@ function App() {
       autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: false,
-      pauseOnHover: true,
       draggable: true,
       progress: undefined,
       theme: "light",
@@ -23,14 +22,14 @@ function App() {
   const warningToast = (warning: string) => {
     toast.warn(warning, {
       position: "bottom-left",
-      autoClose: 5000,
+      autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: false,
-      pauseOnHover: true,
       draggable: true,
       progress: undefined,
       theme: "light",
       transition: Slide,
+      className: "custom-toast",
     });
   };
 
