@@ -70,41 +70,55 @@ const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
 
   // Toggles edit mode for a specific task
   const toggleEditMode = (index: number) => {
-    setPrevTask([...prevTask, { task: taskList[index].task, index: index }]);
-    setTaskList((prevList) =>
-      prevList.map((task, i) =>
-        i === index ? { ...task, edit: !task.edit } : task
-      )
-    );
+    setTaskList((prevList) => {
+      // Find any currently edited task
+      const currentlyEditedIndex = prevList.findIndex((task) => task.edit);
+      const newList = [...prevList];
 
-    if (taskList[index].edit) {
-      if (taskList[index].task) {
-        if (taskList[index].task !== prevTask[index].task) {
-          // Send a toast only when the task is actually updated
-          infoToast("Task updated successfully!");
-
-          // Add the editedAt field to the task
-          setTaskList((prevList) =>
-            prevList.map((task, i) =>
-              i === index
-                ? { ...task, editedAt: new Date().toISOString() }
-                : task
-            )
-          );
-        }
-      } else {
-        warningToast("An existing task cannot be empty!");
-        if (prevTask) {
-          setTaskList((prevList) =>
-            prevList.map((task, i) =>
-              i === index ? { ...task, task: prevTask[index].task } : task
-            )
-          );
+      // If another task is being edited, revert it
+      if (currentlyEditedIndex !== -1 && currentlyEditedIndex !== index) {
+        const originalTask = prevTask.find(
+          (t) => t.index === currentlyEditedIndex
+        );
+        if (originalTask) {
+          newList[currentlyEditedIndex] = {
+            ...newList[currentlyEditedIndex],
+            task: originalTask.task,
+            edit: false,
+          };
         }
       }
-    }
-  };
 
+      // Handle current task
+      const currentTask = newList[index];
+      const isEditing = currentTask.edit;
+
+      // Toggle edit mode
+      newList[index] = { ...currentTask, edit: !isEditing };
+
+      // Store original task when entering edit mode
+      if (!isEditing) {
+        setPrevTask((prev) => [...prev, { task: currentTask.task, index }]);
+      } else {
+        // Handle validation when saving
+        if (!currentTask.task.trim()) {
+          warningToast("Task cannot be empty!");
+          const original = prevTask.find((t) => t.index === index);
+          newList[index].task = original?.task || "";
+          return newList;
+        }
+
+        if (
+          currentTask.task !== prevTask.find((t) => t.index === index)?.task
+        ) {
+          infoToast("Task updated!");
+          newList[index].editedAt = new Date().toISOString();
+        }
+      }
+
+      return newList;
+    });
+  };
   // Allows users to update their tasks
   const handleUpdate = (
     index: number,
