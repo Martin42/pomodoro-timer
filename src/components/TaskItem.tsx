@@ -37,7 +37,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
             className="input-wrapper"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
             <div className="task-wrapper">
@@ -78,7 +77,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
                   alt={element.edit ? "Update Task Icon" : "Edit Task Icon"}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.3 }}
                 />
               </button>

@@ -158,7 +158,6 @@ const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
                   scale: 1,
                   rotate: shouldAnimate ? [0, -180] : -180,
                 }}
-                exit={{ opacity: 0, scale: 1 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
               />
             </button>
