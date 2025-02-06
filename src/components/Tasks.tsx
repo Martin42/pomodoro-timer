@@ -1,47 +1,51 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import TextareaAutosize from "react-textarea-autosize";
-
-//SVG Imports
 import addTaskSVG from "../assets/add-icon.svg";
-import editTaskSVG from "../assets/edit-icon.svg";
-import updateTaskSVG from "../assets/update-icon.svg";
-import deleteTaskSVG from "../assets/delete-icon.svg";
+import TaskItem from "./TaskItem";
 
 interface TaskProps {
   infoToast: (info: string) => void;
   warningToast: (warning: string) => void;
 }
 
-const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
-  const [taskList, setTaskList] = useState<
-    {
-      task: string;
-      edit: boolean;
-      createdAt: string;
-      editedAt: string | null;
-    }[]
-  >(() => {
+type Task = {
+  task: string;
+  edit: boolean;
+  createdAt: string;
+  editedAt: string | null;
+};
+
+const getSavedTasks = (): Task[] => {
+  try {
     const savedTasks = localStorage.getItem("tasks");
     return savedTasks ? JSON.parse(savedTasks) : [];
-  });
+  } catch (error) {
+    console.log("Error parsing tasks from localStorage", error);
+    return [];
+  }
+};
+
+const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
+  const [taskList, setTaskList] = useState<Task[]>(getSavedTasks);
+  const [shouldAnimate, setShouldAnimate] = useState<boolean>(false);
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(taskList));
   }, [taskList]);
 
   const [prevTask, setPrevTask] = useState<string | null>(null);
-  const [shouldAnimate, setShouldAnimate] = useState<boolean>(false);
 
   const addTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const taskTextArea = form.task as HTMLTextAreaElement;
-    const task = taskTextArea.value;
+    const task = taskTextArea.value.trim();
 
     if (!task) return;
 
-    // If a variable "task" exists in the same scope, { task } is automatically expanded to { task: task }.
+    // If a variable "task" exists in the same scope
+    // { task } is automatically expanded to { task: task }.
     setTaskList((prevList) => [
       ...prevList,
       {
@@ -57,9 +61,7 @@ const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
 
     // Handle add task animation
     setShouldAnimate(true);
-    setTimeout(() => {
-      setShouldAnimate(false);
-    }, 300);
+    setTimeout(() => setShouldAnimate(false), 300);
   };
 
   // Toggles edit mode for a specific task
@@ -119,69 +121,12 @@ const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
   return (
     <section className="task-container">
       <h1 className="task-title">CURRENT TASKS</h1>
-      {taskList.length > 0 &&
-        taskList.map((element, index) => (
-          <motion.div
-            key={index}
-            className="input-wrapper"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            <div className="task-wrapper">
-              <label htmlFor="task" className="form-label">
-                task
-              </label>
-              <TextareaAutosize
-                rows={1}
-                name="task"
-                placeholder="Task"
-                value={element.task}
-                className={!element.edit ? "task" : "task-input"}
-                disabled={!element.edit}
-                onChange={(e) => handleUpdate(index, e)}
-              />
-              <span className="task-date">
-                {(() => {
-                  const date = element.editedAt || element.createdAt;
-                  const label = element.editedAt ? "Edited at:" : "Created at:";
-                  return `${label} ${new Date(date).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}`;
-                })()}
-              </span>
-            </div>
-            <div className="task-options-container">
-              <button
-                type="button"
-                title="edit"
-                className="btn btn-small"
-                onClick={() => toggleEditMode(index)}
-              >
-                <motion.img
-                  // adding key attribute forces image re-render allowing for animation
-                  key={element.edit ? "update" : "edit"}
-                  src={element.edit ? updateTaskSVG : editTaskSVG}
-                  alt={element.edit ? "Update Task Icon" : "Edit Task Icon"}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </button>
-              <button
-                type="button"
-                className="btn btn-small"
-                title="delete"
-                onClick={() => handleDelete(index)}
-              >
-                <img src={deleteTaskSVG} alt="Delete Task Icon" />
-              </button>
-            </div>
-          </motion.div>
-        ))}
+      <TaskItem
+        taskList={taskList}
+        toggleEditMode={toggleEditMode}
+        handleUpdate={handleUpdate}
+        handleDelete={handleDelete}
+      />
 
       <form onSubmit={addTask} className="form-container">
         <label htmlFor="task" className="form-label">
