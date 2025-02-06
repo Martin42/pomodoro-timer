@@ -16,6 +16,11 @@ type Task = {
   editedAt: string | null;
 };
 
+type prevTask = {
+  task: string;
+  index: number;
+};
+
 const getSavedTasks = (): Task[] => {
   try {
     const savedTasks = localStorage.getItem("tasks");
@@ -28,13 +33,12 @@ const getSavedTasks = (): Task[] => {
 
 const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
   const [taskList, setTaskList] = useState<Task[]>(getSavedTasks);
+  const [prevTask, setPrevTask] = useState<prevTask[]>([]);
   const [shouldAnimate, setShouldAnimate] = useState<boolean>(false);
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(taskList));
   }, [taskList]);
-
-  const [prevTask, setPrevTask] = useState<string | null>(null);
 
   const addTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,7 +70,7 @@ const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
 
   // Toggles edit mode for a specific task
   const toggleEditMode = (index: number) => {
-    setPrevTask(taskList[index].task);
+    setPrevTask([...prevTask, { task: taskList[index].task, index: index }]);
     setTaskList((prevList) =>
       prevList.map((task, i) =>
         i === index ? { ...task, edit: !task.edit } : task
@@ -75,7 +79,7 @@ const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
 
     if (taskList[index].edit) {
       if (taskList[index].task) {
-        if (taskList[index].task !== prevTask) {
+        if (taskList[index].task !== prevTask[index].task) {
           // Send a toast only when the task is actually updated
           infoToast("Task updated successfully!");
 
@@ -93,7 +97,7 @@ const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
         if (prevTask) {
           setTaskList((prevList) =>
             prevList.map((task, i) =>
-              i === index ? { ...task, task: prevTask } : task
+              i === index ? { ...task, task: prevTask[index].task } : task
             )
           );
         }
@@ -114,7 +118,7 @@ const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
 
   // Delete a specific task
   const handleDelete = (index: number) => {
-    setTaskList(taskList.filter((_, i) => i !== index));
+    setTaskList((prevList) => prevList.filter((_, i) => i !== index));
     infoToast("Task Deleted!");
   };
 
