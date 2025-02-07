@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Folder destined for comparison between Typescript and Javascript
+componentsJSX/
