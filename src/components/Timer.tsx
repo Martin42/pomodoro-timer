@@ -30,6 +30,17 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
   const [resetAnimate, setResetAnimate] = useState(false);
   const [timerMode, setTimerMode] = useState<TimerMode>("focus");
 
+  // Derived Values
+  const minutes = Math.floor(timer / 60);
+  const seconds = timer % 60;
+
+  const clearTimerInterval = () => {
+    if (pomodoroRef.current) {
+      clearInterval(pomodoroRef.current);
+      pomodoroRef.current = null;
+    }
+  };
+
   const startTimer = () => {
     setIsTimerStarted(true);
     pomodoroRef.current = setInterval(() => {
@@ -37,85 +48,70 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
     }, 1000);
 
     if (timer === 0) {
-      clearInterval(pomodoroRef.current);
-      pomodoroRef.current = null;
-      setIsTimerStarted(false);
+      clearTimerInterval();
     }
   };
 
   const pauseTimer = () => {
     setIsTimerStarted(false);
-    if (pomodoroRef.current) {
-      clearInterval(pomodoroRef.current);
-      pomodoroRef.current = null;
-    }
+    clearTimerInterval();
   };
 
   const resetTimer = () => {
     setIsTimerStarted(false);
     setTimer(TIMER_DURATIONS[timerMode]);
-    if (pomodoroRef.current) {
-      clearInterval(pomodoroRef.current);
-      pomodoroRef.current = null;
-    }
-
+    clearTimerInterval();
     infoToast("Timer reset!");
     setResetAnimate(true);
     setTimeout(() => setResetAnimate(false), 300);
   };
 
-  const handlePomodoroMode = (mode: TimerMode) => {
-    setTimerMode(mode);
-    setTimer(TIMER_DURATIONS[mode]);
+  const changeMode = (newMode: TimerMode) => {
+    // Reset timer if mode is changed
+    setIsTimerStarted(false);
+    clearTimerInterval();
+    setTimerMode(newMode);
+    setTimer(TIMER_DURATIONS[newMode]);
   };
 
-  const minutes = Math.floor(timer / 60);
-  const seconds = timer % 60;
-
+  // Side Effects
   useEffect(() => {
-    if (timer === 0) {
-      infoToast("Time's up!");
-    }
+    // Calculate time values directly from timer
+    const currentMinutes = Math.floor(timer / 60);
+    const currentSeconds = timer % 60;
 
-    if (minutes === TIMER_DURATIONS.focus / 60) {
-      document.title =
-        minutes + ":" + seconds.toString().padStart(2, "0") + " - Focus";
-    } else {
-      document.title =
-        minutes + ":" + seconds.toString().padStart(2, "0") + " - Break";
-    }
-  }, [minutes, seconds, timer, infoToast]);
+    // Formatting helper
+    const formatTime = (time: number) => time.toString().padStart(2, "0");
+
+    // Handle timer completion
+    if (timer === 0) infoToast("Time's up!");
+
+    // Update document title
+    document.title = `${currentMinutes}:${formatTime(currentSeconds)} - ${
+      timerMode === "focus" ? "Focus" : "Break"
+    }`;
+  }, [timer, timerMode, infoToast]);
 
   return (
     <section className="timer-container">
       <div className="timer">
-        <button
-          type="button"
-          className="squared-btn"
-          onClick={() => handlePomodoroMode("focus")}
-        >
-          Focus
-        </button>
-        <button
-          type="button"
-          className="squared-btn"
-          onClick={() => handlePomodoroMode("shortBreak")}
-        >
-          Short Break
-        </button>
-        <button
-          type="button"
-          className="squared-btn"
-          onClick={() => handlePomodoroMode("longBreak")}
-        >
-          Long Break
-        </button>
+        {Object.keys(TIMER_DURATIONS).map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            className="squared-btn"
+            onClick={() => changeMode(mode as TimerMode)}
+          >
+            {mode.charAt(0).toUpperCase() +
+              mode.slice(1).replace(/([A-Z])/g, " $1")}
+          </button>
+        ))}
       </div>
       <h1 className="timer-title">
         {minutes}:{seconds.toString().padStart(2, "0")}
       </h1>
       <div className="timer-commands-container">
-        {timer !== 0 ? (
+        {timer !== 0 && (
           <button
             type="button"
             className="btn btn-large"
@@ -133,7 +129,7 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
               transition={{ duration: 0.2, ease: "easeOut" }}
             />
           </button>
-        ) : null}
+        )}
 
         <button
           className="btn btn-large"
