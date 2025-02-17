@@ -30,9 +30,16 @@ header {
 }
 
 .timer {
+  margin-top: 8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.timer-title {
   color: #eee3e3;
   font-size: 4rem;
-  margin-top: 8rem;
   text-align: center;
   text-shadow: -1px 1px 0px rgba(0, 0, 0, 0.25);
 }
@@ -133,6 +140,17 @@ header {
   filter: drop-shadow(-1px 0px 4px rgba(0, 0, 0, 0.25));
   justify-content: center;
 }
+
+.squared-btn {
+  border-radius: 6px;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: none;
+  filter: drop-shadow(-1px 0px 4px rgba(0, 0, 0, 0.25));
+  color: #456b88;
+}
+
+/* TO DO: Add hover effect to buttons */
 
 /* Toasts */
 .custom-toast-wrapper {
