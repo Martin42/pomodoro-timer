@@ -94,19 +94,6 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
 
   return (
     <section className="timer-container">
-      <div className="timer">
-        {Object.keys(TIMER_DURATIONS).map((mode) => (
-          <button
-            key={mode}
-            type="button"
-            className="squared-btn"
-            onClick={() => changeMode(mode as TimerMode)}
-          >
-            {mode.charAt(0).toUpperCase() +
-              mode.slice(1).replace(/([A-Z])/g, " $1")}
-          </button>
-        ))}
-      </div>
       <h1 className="timer-title">
         {minutes}:{seconds.toString().padStart(2, "0")}
       </h1>
@@ -151,6 +138,23 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
             transition={{ duration: 0.2, ease: "easeOut" }}
           />
         </button>
+      </div>
+      <div className="timer">
+        {Object.keys(TIMER_DURATIONS).map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            className={
+              TIMER_DURATIONS[mode as TimerMode] === timer
+                ? "squared-btn active"
+                : "squared-btn"
+            }
+            onClick={() => changeMode(mode as TimerMode)}
+          >
+            {mode.charAt(0).toUpperCase() +
+              mode.slice(1).replace(/([A-Z])/g, " $1")}
+          </button>
+        ))}
       </div>
     </section>
   );

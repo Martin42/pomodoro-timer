@@ -27,14 +27,16 @@ header {
   justify-content: center;
   flex-direction: column;
   gap: 1rem;
+  margin-top: 8rem;
 }
 
 .timer {
-  margin-top: 8rem;
-  display: flex;
-  justify-content: center;
   align-items: center;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0 0 0;
 }
 
 .timer-title {
@@ -143,14 +145,33 @@ header {
 
 .squared-btn {
   border-radius: 6px;
-  font-size: 1rem;
-  padding: 0.5rem;
   border: none;
-  filter: drop-shadow(-1px 0px 4px rgba(0, 0, 0, 0.25));
   color: #456b88;
+  filter: drop-shadow(-1px 0px 4px rgba(0, 0, 0, 0.25));
+  font-size: 1rem;
+  min-width: 9rem;
+  padding: 0.75rem;
 }
 
-/* TO DO: Add hover effect to buttons */
+/* BTN status */
+.squared-btn:active,
+.btn:active {
+  transition: transform 50ms;
+  transform: scale(0.97);
+}
+
+.squared-btn:hover,
+.btn:hover {
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+.active {
+  background-color: transparent;
+  border: 1px solid #eee3e3;
+  color: #eee3e3;
+  box-shadow: -1px -1px 2px 0px rgba(0, 0, 0, 0.2) inset;
+}
 
 /* Toasts */
 .custom-toast-wrapper {
@@ -170,6 +191,10 @@ header {
   .task-container {
     margin: 0 auto;
     min-width: 32rem;
+  }
+
+  .timer {
+    flex-direction: row;
   }
 }
 

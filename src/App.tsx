@@ -7,7 +7,7 @@ import { Slide, toast, ToastContainer } from "react-toastify";
 function App() {
   const infoToast = (info: string) => {
     toast.info(info, {
-      position: "bottom-left",
+      position: "top-left",
       autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: false,
@@ -21,7 +21,7 @@ function App() {
 
   const warningToast = (warning: string) => {
     toast.warn(warning, {
-      position: "bottom-left",
+      position: "top-left",
       autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: false,
