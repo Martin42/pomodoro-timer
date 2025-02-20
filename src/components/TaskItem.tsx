@@ -22,12 +22,12 @@ interface TaskItemProps {
   handleDelete: (index: number) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({
+const TaskItem = ({
   taskList,
   toggleEditMode,
   handleUpdate,
   handleDelete,
-}) => {
+}: TaskItemProps) => {
   return (
     <>
       {taskList.length > 0 &&

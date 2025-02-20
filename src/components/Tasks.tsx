@@ -31,7 +31,7 @@ const getSavedTasks = (): Task[] => {
   }
 };
 
-const Tasks: React.FC<TaskProps> = ({ infoToast, warningToast }) => {
+const Tasks = ({ infoToast, warningToast }: TaskProps) => {
   const [taskList, setTaskList] = useState<Task[]>(getSavedTasks);
   const [prevTask, setPrevTask] = useState<prevTask[]>([]);
   const [shouldAnimate, setShouldAnimate] = useState<boolean>(false);

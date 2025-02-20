@@ -10,7 +10,7 @@ interface TimerProps {
   infoToast: (info: string) => void;
 }
 
-const Timer: React.FC<TimerProps> = ({ infoToast }) => {
+const Timer = ({ infoToast }: TimerProps) => {
   const {
     timer,
     isTimerStarted,
