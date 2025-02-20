@@ -46,10 +46,6 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
     pomodoroRef.current = setInterval(() => {
       setTimer((prevTime) => Math.max(prevTime - 1, 0));
     }, 1000);
-
-    if (timer === 0) {
-      clearTimerInterval();
-    }
   };
 
   const pauseTimer = () => {
@@ -76,16 +72,27 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
 
   // Side Effects
   useEffect(() => {
+    if (timer === 0) {
+      clearTimerInterval();
+      setIsTimerStarted(false);
+      infoToast("Time's up!");
+
+      const blinkInterval = setInterval(() => {
+        document.title =
+          document.title === "Timer is over" ? " " : "Timer is over";
+      }, 1000);
+
+      return () => clearInterval(blinkInterval);
+    }
+
+    console.log(timerMode);
+
     // Calculate time values directly from timer
     const currentMinutes = Math.floor(timer / 60);
     const currentSeconds = timer % 60;
 
     // Formatting helper
     const formatTime = (time: number) => time.toString().padStart(2, "0");
-
-    // Handle timer completion
-    if (timer === 0) infoToast("Time's up!");
-
     // Update document title
     document.title = `${currentMinutes}:${formatTime(currentSeconds)} - ${
       timerMode === "focus" ? "Focus" : "Break"
@@ -145,9 +152,7 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
             key={mode}
             type="button"
             className={
-              TIMER_DURATIONS[mode as TimerMode] === timer
-                ? "squared-btn active"
-                : "squared-btn"
+              timerMode === mode ? "squared-btn active" : "squared-btn"
             }
             onClick={() => changeMode(mode as TimerMode)}
           >
