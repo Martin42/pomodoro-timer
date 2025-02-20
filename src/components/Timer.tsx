@@ -85,19 +85,13 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
       return () => clearInterval(blinkInterval);
     }
 
-    console.log(timerMode);
-
-    // Calculate time values directly from timer
-    const currentMinutes = Math.floor(timer / 60);
-    const currentSeconds = timer % 60;
-
     // Formatting helper
     const formatTime = (time: number) => time.toString().padStart(2, "0");
     // Update document title
-    document.title = `${currentMinutes}:${formatTime(currentSeconds)} - ${
+    document.title = `${minutes}:${formatTime(seconds)} - ${
       timerMode === "focus" ? "Focus" : "Break"
     }`;
-  }, [timer, timerMode, infoToast]);
+  }, [timer, timerMode, infoToast, minutes, seconds]);
 
   return (
     <section className="timer-container">
