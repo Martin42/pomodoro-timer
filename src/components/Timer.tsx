@@ -1,113 +1,45 @@
-import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { useTimer } from "../hooks/useTimer";
 
-// SVG Imports
+// SVG Icons
 import startSVG from "../assets/start-icon.svg";
 import pauseSVG from "../assets/pause-icon.svg";
 import resetSVG from "../assets/reset-icon.svg";
 
-// Timer Durations
-const TIMER_DURATIONS = {
-  focus: 25 * 60, // 25 minutes in seconds
-  shortBreak: 5 * 60, // 5 minutes in seconds
-  longBreak: 15 * 60, // 15 minutes in seconds
-} as const;
-
-// Timer Mode
-type TimerMode = keyof typeof TIMER_DURATIONS;
-
-interface TaskProps {
+interface TimerProps {
   infoToast: (info: string) => void;
 }
 
-const Timer: React.FC<TaskProps> = ({ infoToast }) => {
-  // Ref for setInterval
-  const pomodoroRef = useRef<number | null>(null);
+const Timer: React.FC<TimerProps> = ({ infoToast }) => {
+  const {
+    timer,
+    isTimerStarted,
+    resetAnimate,
+    timerMode,
+    startTimer,
+    pauseTimer,
+    resetTimer,
+    changeMode,
+  } = useTimer(infoToast);
 
-  // Timer State
-  const [timer, setTimer] = useState(TIMER_DURATIONS.focus);
-  const [isTimerStarted, setIsTimerStarted] = useState(false);
-  const [resetAnimate, setResetAnimate] = useState(false);
-  const [timerMode, setTimerMode] = useState<TimerMode>("focus");
-
-  // Derived Values
   const minutes = Math.floor(timer / 60);
-  const seconds = timer % 60;
-
-  const clearTimerInterval = () => {
-    if (pomodoroRef.current) {
-      clearInterval(pomodoroRef.current);
-      pomodoroRef.current = null;
-    }
-  };
-
-  const startTimer = () => {
-    setIsTimerStarted(true);
-    pomodoroRef.current = setInterval(() => {
-      setTimer((prevTime) => Math.max(prevTime - 1, 0));
-    }, 1000);
-  };
-
-  const pauseTimer = () => {
-    setIsTimerStarted(false);
-    clearTimerInterval();
-  };
-
-  const resetTimer = () => {
-    setIsTimerStarted(false);
-    setTimer(TIMER_DURATIONS[timerMode]);
-    clearTimerInterval();
-    infoToast("Timer reset!");
-    setResetAnimate(true);
-    setTimeout(() => setResetAnimate(false), 300);
-  };
-
-  const changeMode = (newMode: TimerMode) => {
-    // Reset timer if mode is changed
-    setIsTimerStarted(false);
-    clearTimerInterval();
-    setTimerMode(newMode);
-    setTimer(TIMER_DURATIONS[newMode]);
-  };
-
-  // Side Effects
-  useEffect(() => {
-    if (timer === 0) {
-      clearTimerInterval();
-      setIsTimerStarted(false);
-      infoToast("Time's up!");
-
-      const blinkInterval = setInterval(() => {
-        document.title =
-          document.title === "Timer is over" ? " " : "Timer is over";
-      }, 1000);
-
-      return () => clearInterval(blinkInterval);
-    }
-
-    // Formatting helper
-    const formatTime = (time: number) => time.toString().padStart(2, "0");
-    // Update document title
-    document.title = `${minutes}:${formatTime(seconds)} - ${
-      timerMode === "focus" ? "Focus" : "Break"
-    }`;
-  }, [timer, timerMode, infoToast, minutes, seconds]);
+  const seconds = (timer % 60).toString().padStart(2, "0");
 
   return (
     <section className="timer-container">
       <h1 className="timer-title">
-        {minutes}:{seconds.toString().padStart(2, "0")}
+        {minutes}:{seconds}
       </h1>
+
       <div className="timer-commands-container">
         {timer !== 0 && (
           <button
             type="button"
             className="btn btn-large"
-            title={isTimerStarted ? "pause" : "start"}
+            title={isTimerStarted ? "Pause" : "Start"}
             onClick={isTimerStarted ? pauseTimer : startTimer}
           >
             <motion.img
-              // adding key attribute forces image re-render allowing for animation
               key={isTimerStarted ? "pause-icon" : "start-icon"}
               src={isTimerStarted ? pauseSVG : startSVG}
               alt={isTimerStarted ? "Pause Timer Icon" : "Start Timer Icon"}
@@ -121,10 +53,10 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
 
         <button
           className="btn btn-large"
-          title="reset"
+          title="Reset"
           type="button"
           onClick={resetTimer}
-          disabled={timer === TIMER_DURATIONS[timerMode]}
+          disabled={timer === (timerMode === "focus" ? 25 * 60 : 5 * 60)}
         >
           <motion.img
             src={resetSVG}
@@ -140,18 +72,20 @@ const Timer: React.FC<TaskProps> = ({ infoToast }) => {
           />
         </button>
       </div>
+
       <div className="timer">
-        {Object.keys(TIMER_DURATIONS).map((mode) => (
+        {["focus", "shortBreak", "longBreak"].map((mode) => (
           <button
             key={mode}
             type="button"
             className={
               timerMode === mode ? "squared-btn active" : "squared-btn"
             }
-            onClick={() => changeMode(mode as TimerMode)}
+            onClick={() =>
+              changeMode(mode as "focus" | "shortBreak" | "longBreak")
+            }
           >
-            {mode.charAt(0).toUpperCase() +
-              mode.slice(1).replace(/([A-Z])/g, " $1")}
+            {mode.charAt(0).toUpperCase() + mode.slice(1)}
           </button>
         ))}
       </div>
